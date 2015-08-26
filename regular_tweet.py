@@ -13,7 +13,7 @@ class RegularTweet(object):
         oauth = auth.Auth()
         b_schedular = BlockingScheduler()
 
-    @b_schedular.scheduled_job("interval", minutes=30)
+    @b_scheduler.scheduled_job("interval", minutes=30)
     def regular_tweet(self):
         f = open("random_tweet.txt")
         tweets = f.readlines()
