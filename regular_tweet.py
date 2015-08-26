@@ -6,34 +6,33 @@ import random
 import logging
 import auth
 
-class RegularTweet(object):
-    """30分おきにランダムの定期ツイートを行うためのクラス"""
+# class RegularTweet(object):
+#     """30分おきにランダムの定期ツイートを行うためのクラス"""
 
-    b_schedular = BlockingScheduler()
+b_schedular = BlockingScheduler()
 
-    def __init__(self):
-        oauth = auth.Auth()
+# def __init__(self):
+oauth = auth.Auth()
 
-    @b_scheduler.scheduled_job("interval", minutes=30)
-    def regular_tweet(self):
-        f = open("random_tweet.txt")
-        tweets = f.readlines()
-        tweet = random.choice(tweets)
-        params = {"status": tweet}
+@b_scheduler.scheduled_job("interval", minutes=30)
+def regular_tweet(self):
+    f = open("random_tweet.txt")
+    tweets = f.readlines()
+    tweet = random.choice(tweets)
+    params = {"status": tweet}
 
-        # OAuth認証でPOST methodを用いてツイートを投稿
-        tweet_url = "https://api.twitter.com/1.1/statuses/update.json"
-        req = self.oauth.twitter.post(tweet_url, params=params)
+    # OAuth認証でPOST methodを用いてツイートを投稿
+    tweet_url = "https://api.twitter.com/1.1/statuses/update.json"
+    req = self.oauth.twitter.post(tweet_url, params=params)
 
-        # レスポンスを確認
-        if req.status_code == 200:
-            logging.info("Tweet Succeeded.")
-        else:
-            logging.error("Status Code %d" % req.status_code)
+    # レスポンスを確認
+    if req.status_code == 200:
+        logging.info("Tweet Succeeded.")
+    else:
+        logging.error("Status Code %d" % req.status_code)
 
-    def start(self):
-        self.b_schedular.start()
-
+# def start(self):
 if __name__ == '__main__':
-    reg = RegularTweet()
-    reg.start()
+    # reg = RegularTweet()
+    # reg.start()
+    self.b_schedular.start()
