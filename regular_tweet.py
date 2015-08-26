@@ -15,7 +15,7 @@ b_scheduler = BlockingScheduler()
 oauth = auth.Auth()
 
 @b_scheduler.scheduled_job("interval", minutes=30)
-def regular_tweet(self):
+def regular_tweet():
     f = open("random_tweet.txt")
     tweets = f.readlines()
     tweet = random.choice(tweets)
