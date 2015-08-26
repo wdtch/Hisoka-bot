@@ -37,4 +37,4 @@ def regular_tweet():
 if __name__ == '__main__':
     # reg = RegularTweet()
     # reg.start()
-    b_schedular.start()
+    b_scheduler.start()
