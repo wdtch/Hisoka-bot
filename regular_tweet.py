@@ -14,6 +14,7 @@ tweets = list(f.readlines())
 @b_scheduler.scheduled_job("interval", minutes=1)
 def regular_tweet():
     tweet = random.choice(tweets)
+    print("Tweet: {0}".format(tweet))
     params = {"status": tweet}
 
     # OAuth認証でPOST methodを用いてツイートを投稿
@@ -38,7 +39,7 @@ def tweet_again():
 
     # レスポンスを確認
     if req.status_code == 200:
-        print("Tweet Succeeded.")
+        print("Retry - Tweet Succeeded.")
     else:
         print("Retry Failed - Status Code {0}".format(req.status_code))
 
