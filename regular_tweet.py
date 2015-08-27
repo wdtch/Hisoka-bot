@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from apscheduler.schedulers.blocking import BlockingScheduler
 from __future__ import print_function
+from apscheduler.schedulers.blocking import BlockingScheduler
 import random
 import auth
 
