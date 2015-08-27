@@ -14,7 +14,7 @@ b_scheduler = BlockingScheduler()
 # def __init__(self):
 oauth = auth.Auth()
 
-@b_scheduler.scheduled_job("interval", minutes=30)
+@b_scheduler.scheduled_job("interval", minutes=3)
 def regular_tweet():
     f = open("random_tweet.txt")
     tweets = f.readlines()
@@ -27,9 +27,9 @@ def regular_tweet():
 
     # レスポンスを確認
     if req.status_code == 200:
-        logging.info("Tweet Succeeded.")
+        print("Tweet Succeeded.")
     else:
-        logging.error("Status Code %d" % req.status_code)
+        print("Status Code {0}" % req.status_code)
 
 # def start(self):
 #     self.b_schedular.start()
