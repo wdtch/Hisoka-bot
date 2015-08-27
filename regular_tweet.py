@@ -9,7 +9,7 @@ import auth
 b_scheduler = BlockingScheduler()
 
 # 30分毎に定期ツイート
-@b_scheduler.scheduled_job("interval", minutes=30)
+@b_scheduler.scheduled_job("interval", minutes=1)
 def regular_tweet():
     f = open("random_tweet.txt")
     tweets = f.readlines()
@@ -23,6 +23,8 @@ def regular_tweet():
     # レスポンスを確認
     if req.status_code == 200:
         print("Tweet Succeeded.")
+    elif req.status_code == 403: # 重複？したとき
+        regular_tweet() # リトライ
     else:
         print("Error: Status Code {0}".format(req.status_code))
 
