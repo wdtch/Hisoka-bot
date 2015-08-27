@@ -22,7 +22,7 @@ def regular_tweet():
     if req.status_code == 200:
         print("Tweet Succeeded.")
     else:
-        print("Error: Status Code %d" % req.status_code)
+        print("Error: Status Code {0}".format(req.status_code))
 
 if __name__ == '__main__':
     b_scheduler.start()
