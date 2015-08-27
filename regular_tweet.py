@@ -8,7 +8,7 @@ import auth
 
 b_scheduler = BlockingScheduler()
 f = open("random_tweet.txt")
-tweets = f.readlines().copy()
+tweets = list(f.readlines())
 
 # 30分毎に定期ツイート
 @b_scheduler.scheduled_job("interval", minutes=1)
