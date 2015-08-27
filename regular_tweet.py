@@ -40,7 +40,7 @@ def tweet_again():
     if req.status_code == 200:
         print("Tweet Succeeded.")
     else:
-        print("Error: Status Code {0}".format(req.status_code))
+        print("Retry Failed - Status Code {0}".format(req.status_code))
 
 if __name__ == '__main__':
     b_scheduler.start()
