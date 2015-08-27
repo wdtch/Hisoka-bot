@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from apscheduler.schedulers.blocking import BlockingScheduler
+from __future__ import print_function
 import random
 import auth
 
