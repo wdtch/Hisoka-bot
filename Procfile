@@ -1,1 +1,1 @@
-bot: python regular_test.py
+bot: python regular_tweet.py

@@ -5,15 +5,10 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 import random
 import auth
 
-# class RegularTweet(object):
-# """30分おきにランダムの定期ツイートを行うためのクラス"""
-
 b_scheduler = BlockingScheduler()
-
-# def __init__(self):
 oauth = auth.Auth()
 
-@b_scheduler.scheduled_job("interval", minutes=3)
+@b_scheduler.scheduled_job("interval", minutes=1)
 def regular_tweet():
     f = open("random_tweet.txt")
     tweets = f.readlines()
@@ -30,10 +25,5 @@ def regular_tweet():
     else:
         print("Status Code {0}" % req.status_code)
 
-# def start(self):
-#     self.b_schedular.start()
-
 if __name__ == '__main__':
-    # reg = RegularTweet()
-    # reg.start()
     b_scheduler.start()
