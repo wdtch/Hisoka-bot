@@ -3,7 +3,7 @@
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 import random
-import logging
+# import logging
 import auth
 
 # class RegularTweet(object):
