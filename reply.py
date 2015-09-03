@@ -40,6 +40,9 @@ class AutoReply(object):
                 self.since_id = latest_reply["id_str"]  # 最新のリプライのIDをセット
                 self._post_reply(latest_reply)  # 取得したリプライに対して自動返信
 
+            else:
+                print("No reply gotten.")
+
             # 最新の次以降の各ツイートの本文を表示、内容に応じてリプライを返す
             for reply in mentions[1:]:
                 print("Got: {}".format(reply["text"]))
