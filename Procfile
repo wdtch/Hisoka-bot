@@ -1,1 +1,1 @@
-bot: python regular_tweet.py
+bot: python main.py
