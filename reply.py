@@ -83,7 +83,7 @@ b_scheduler = BlockingScheduler()
 ar = AutoReply()
 
 
-@b_scheduler.scheduled_job("interval", minutes=5)
+@b_scheduler.scheduled_job("interval", minutes=1)
 def run():
     ar.get_reply()
 
