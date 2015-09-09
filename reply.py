@@ -8,6 +8,7 @@ from __future__ import print_function
 from requests_oauthlib import OAuth1Session
 import json
 import re
+import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 import auth
 
@@ -15,15 +16,32 @@ import auth
 class AutoReply(object):
 
     def __init__(self):
-        self.since_id = ""
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
 
     def get_reply(self):
         reply_url = "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
+
+        # ファイルをopenしてsince_idを読み込む
+        # ファイルが存在しなかったとき(初めてプログラムが起動されたとき)は
+        # 例外が送出されるので、since_idに空文字列をセット
+        try:
+            f = open("since_id.txt", "r")
+            since_id = f.readline()
+            f.close()
+        except IOError:
+            self.logger.error("since_id.txt does not exist.")
+            # exit(1)
+            since_id = ""
+
+        print("since_id: {}".format(since_id))
+
+
         # 最新50ツイートを読み込む
-        if self.since_id == "":
+        if since_id == "":
             params = {"count": 50}
         else:
-            params = {"count": 50, "since_id": self.since_id}
+            params = {"count": 50, "since_id": since_id}
 
         # OAuth で GET
         req = auth.twitter.get(reply_url, params=params)
@@ -36,21 +54,29 @@ class AutoReply(object):
             # 最新のツイートについてはそのIDを保存するのでループから分離
             if not mentions == []:
                 latest_reply = mentions[0]
-                print("Got: {}".format(latest_reply["text"]))
-                self.since_id = latest_reply["id_str"]  # 最新のリプライのIDをセット
+                self.logger.info("Got: {}".format(latest_reply["text"]))
+
+                since_id = latest_reply["id_str"]  # 最新のリプライのIDを記録
+                try:
+                    f = open("since_id.txt", "w")
+                    f.write(since_id)
+                    f.close()
+                except IOError:
+                    self.logger.error("Failed to write since_id.")
+
                 self._post_reply(latest_reply)  # 取得したリプライに対して自動返信
 
             else:
-                print("No reply gotten.")
+                self.logger.info("No reply gotten.")
 
             # 最新の次以降の各ツイートの本文を表示、内容に応じてリプライを返す
             for reply in mentions[1:]:
-                print("Got: {}".format(reply["text"]))
+                self.logger.info("Got: {}".format(reply["text"]))
                 self._post_reply(reply)  # 取得したリプライに対して自動返信
 
         else:
-            # エラーの場合
-            print("Error: %d" % req.status_code)
+            # リプライを読み込めなかった場合
+            self.logger.error("Error: {}".format(req.status_code))
 
     def _post_reply(self, tweet):
         tweet_url = "https://api.twitter.com/1.1/statuses/update.json"
@@ -77,18 +103,20 @@ class AutoReply(object):
             req = auth.twitter.post(tweet_url, params=params)
 
             if req.status_code == 200:
-                print("Reply Succeeded.")
+                self.logger.info("Reply Succeeded.")
             else:
-                print("Reply Failed - Status Code {0}".format(req.status_code))
+                self.logger.error("Reply Failed - Status Code {0}".format(req.status_code))
 
 # 単体実行時に1分毎にリプライを取得、自動返信
 b_scheduler = BlockingScheduler()
 ar = AutoReply()
 
 
-@b_scheduler.scheduled_job("interval", minutes=1)
-def run():
-    ar.get_reply()
+# @b_scheduler.scheduled_job("interval", minutes=1)
+# def run():
+#     ar.get_reply()
 
 if __name__ == '__main__':
-    b_scheduler.start()
+    # b_scheduler.add_job(run, "interval", minutes=1)
+    # b_scheduler.start()
+    ar.get_reply()
