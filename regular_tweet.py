@@ -17,7 +17,7 @@ class RegularTweet(object):
     # @b_scheduler.scheduled_job("interval", minutes=30)
     def regular_tweet(self):
         tweet = random.choice(self.tweets)
-        # print("Tweet: {0}".format(tweet))
+        print("Tweet: {0}".format(tweet))
         params = {"status": tweet}
 
         # OAuth認証でPOST methodを用いてツイートを投稿
