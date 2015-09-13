@@ -17,8 +17,9 @@ import card
 class AutoReply(object):
 
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
+        # self.logger = logging.getLogger(__name__)
+        # self.logger.setLevel(logging.INFO)
+        pass
 
     def get_reply(self):
         reply_url = "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
@@ -31,7 +32,7 @@ class AutoReply(object):
             since_id = f.readline()
             f.close()
         except IOError:
-            self.logger.error("since_id.txt does not exist.")
+            print("since_id.txt does not exist.")
             # exit(1)
             since_id = ""
 
@@ -52,7 +53,7 @@ class AutoReply(object):
             # 最新のツイートについてはそのIDを保存するのでループから分離
             if not mentions == []:
                 latest_reply = mentions[0]
-                self.logger.info("Got: {}".format(latest_reply["text"]))
+                print("Got: {}".format(latest_reply["text"]))
 
                 since_id = latest_reply["id_str"]  # 最新のリプライのIDを記録
                 try:
@@ -60,21 +61,21 @@ class AutoReply(object):
                     f.write(since_id)
                     f.close()
                 except IOError:
-                    self.logger.error("Failed to write since_id.")
+                    print("Failed to write since_id.")
 
                 self._post_reply(latest_reply)  # 取得したリプライに対して自動返信
 
             else:
-                self.logger.info("No reply gotten.")
+                print("No reply gotten.")
 
             # 最新の次以降の各ツイートの本文を表示、内容に応じてリプライを返す
             for reply in mentions[1:]:
-                self.logger.info("Got: {}".format(reply["text"]))
+                print("Got: {}".format(reply["text"]))
                 self._post_reply(reply)  # 取得したリプライに対して自動返信
 
         else:
             # リプライを読み込めなかった場合
-            self.logger.error("Error: {}".format(req.status_code))
+            print("Failed to read reply. Error code: {}".format(req.status_code))
 
     def _post_reply(self, tweet):
         tweet_url = "https://api.twitter.com/1.1/statuses/update.json"
@@ -97,11 +98,11 @@ class AutoReply(object):
 
         # 「占って」というリプライに対して占いを実行し、結果をリプライで返す
         elif re.search(r"占って", tweet["text"]):
-            params = self.do_fortune()
+            params = self.do_fortune(tweet)
 
         # 「ポーカー」というリプライに対してポーカーを実行
-        elif re.search(r"ポーカー", tweet["text"]):
-            params = self.do_poker(tweet["user"]["screen_name"])
+        # elif re.search(r"ポーカー", tweet["text"]):
+        #     params = self.do_poker(tweet["user"]["screen_name"])
 
         else:
             # ヒットしなければパラメータを表す変数をNoneにしてツイート動作を行わない
@@ -112,46 +113,43 @@ class AutoReply(object):
             req = auth.twitter.post(tweet_url, params=params)
 
             if req.status_code == 200:
-                self.logger.info("Reply Succeeded.")
+                print("Reply Succeeded.")
             else:
-                self.logger.error(
+                print(
                     "Reply Failed - Status Code {0}".format(req.status_code))
 
-    def do_fortune(self):
+    def do_fortune(self, to_tweet):
         faf = card.FourAceFortune()
         result = faf.fortune()
 
         if result == 0:
-            reply_text += "@" + \
-                tweet["user"]["screen_name"] + "you are very lucky!!!"
+            reply_text = "@" + \
+                to_tweet["user"]["screen_name"] + "you are very lucky!!!"
         elif result == 1:
-            reply_text += "@" + tweet["user"]["screen_name"] + "you are lucky!"
+            reply_text = "@" + to_tweet["user"]["screen_name"] + "you are lucky!"
         elif result == 2:
-            reply_text += "@" + \
-                tweet["user"]["screen_name"] + "you are not lucky or unlucky."
+            reply_text = "@" + \
+                to_tweet["user"]["screen_name"] + "you are not lucky or unlucky."
         elif result == 3:
-            reply_text += "@" + \
-                tweet["user"]["screen_name"] + "Perhaps you are unlucky..."
+            reply_text = "@" + \
+                to_tweet["user"]["screen_name"] + "Perhaps you are unlucky..."
         elif result == 4:
-            reply_text += "@" + \
-                tweet["user"]["screen_name"] + "Something wrong."
+            reply_text = "@" + \
+                to_tweet["user"]["screen_name"] + "Something wrong."
         params = {
-            "status": reply_text, "in_reply_to_status_id": tweet["id_str"]}
+            "status": reply_text, "in_reply_to_status_id": to_tweet["id_str"]}
 
         return params
 
-    def do_poker(self, player_id):
-        # ポーカーを行うためのクラスインスタンスを生成(同時に最初の手札も生成)
-        p = card.Poker()
-        # プレイヤー側の最初の手札を文字列で取得
-        player_hand = p.first_hand()
+    # def do_poker(self, player_id):
+    #     # ポーカーを行うためのクラスインスタンスを生成(同時に最初の手札も生成)
+    #     p = card.Poker()
+    #     # プレイヤー側の最初の手札を文字列で取得
+    #     player_hand = p.first_hand()
 
-        # 最初の手札と、交換の有無を確認するリプライを送信
+    #     # 最初の手札と、交換の有無を確認するリプライを送信
 
 
-# 単体実行時に1分毎にリプライを取得、自動返信
-b_scheduler = BlockingScheduler()
-ar = AutoReply()
 
 
 # @b_scheduler.scheduled_job("interval", minutes=1)
@@ -159,6 +157,7 @@ ar = AutoReply()
 #     ar.get_reply()
 
 if __name__ == '__main__':
-    # b_scheduler.add_job(run, "interval", minutes=1)
-    # b_scheduler.start()
+    # 単体実行時に1分毎にリプライを取得、自動返信
+    b_scheduler = BlockingScheduler()
+    ar = AutoReply()
     ar.get_reply()

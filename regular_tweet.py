@@ -30,7 +30,7 @@ class RegularTweet(object):
         elif req.status_code == 403: # 重複したとき
             self.tweet_again() # リトライ
         else:
-            print("Error: Status Code {0}".format(req.status_code))
+            print("Failed to tweet. Error code: {0}".format(req.status_code))
 
     # ツイートが失敗した時のリトライ用メソッド
     def tweet_again(self):
