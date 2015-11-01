@@ -15,7 +15,7 @@ import auth
 import card
 import fortune
 import poker
-import mytwitterlib
+# import mytwitterlib
 
 
 mention_url = "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
@@ -27,7 +27,9 @@ class AutoReply(object):
     def __init__(self):
         # self.logger = logging.getLogger(__name__)
         # self.logger.setLevel(logging.INFO)
-        self.twitterlib = mytwitterlib.MyTwitterLib(auth.CK, auth.CS, auth.AT, auth.AS)
+        # self.twitterlib = mytwitterlib.MyTwitterLib(
+            # auth.CK, auth.CS, auth.AT, auth.AS)
+        pass
 
     def handle_mention(self):
         # ファイルをopenしてsince_idを読み込む
@@ -113,25 +115,23 @@ class AutoReply(object):
             if result is not None:
                 if result[0] == "player":
                     reply_text = "\n" + "you: " + result[1] + "\n" + \
-                                    "hisoka: " + result[2] + "\n" + "You win!"
+                        "hisoka: " + result[2] + "\n" + "You win!"
                 elif result[0] == "hisoka":
                     reply_text = "\n" + "you: " + result[1] + "\n" + \
-                                    "hisoka: " + result[2] + "\n" + "You lose!"
+                        "hisoka: " + result[2] + "\n" + "You lose!"
                 elif result[0] == "draw":
                     reply_text = "\n" + "you: " + result[1] + "\n" + \
-                                    "hisoka: " + result[2] + "\n" + "Draw!"
+                        "hisoka: " + result[2] + "\n" + "Draw!"
                 else:
                     reply_text = "something wrong."
                 params = {
-                "status": "@" + mention["user"]["screen_name"] + reply_text, "in_reply_to_status_id": mention["id_str"]}
+                    "status": "@" + mention["user"]["screen_name"] + reply_text, "in_reply_to_status_id": mention["id_str"]}
             else:
                 params = None
 
         else:
             # ヒットしなければパラメータを表す変数をNoneにしてツイート動作を行わない
             params = None
-
-        print("parameter: {}".format(params))
 
         self._post_tweet(params)
 
@@ -159,7 +159,7 @@ class AutoReply(object):
         elif result == 2:
             reply_text = "@" + \
                 mention["user"]["screen_name"] + \
-                    " you are not lucky or unlucky."
+                " you are not lucky or unlucky."
         elif result == 3:
             reply_text = "@" + \
                 mention["user"]["screen_name"] + " Perhaps you are unlucky..."
@@ -184,8 +184,8 @@ class AutoReply(object):
         # 最初の手札を送信
         first = poker_player.first_hand_str()
         first_reply = "@" + \
-                mention["user"]["screen_name"] + " 最初の手札は\n" + \
-                first + "\n" + "です。"
+            mention["user"]["screen_name"] + " 最初の手札は\n" + \
+            first + "\n" + "です。"
         params = {
             "status": first_reply, "in_reply_to_status_id": mention["id_str"]}
         self._post_tweet(params)
@@ -228,7 +228,8 @@ class AutoReply(object):
                     reply_text = got_mention["text"].split()[1]
                     # フォーマット(1〜5の数字が5文字以下)に合うかチェック
                     if re.match(r"^[0-5]{1,5}$", reply_text):
-                        result = poker_player.change_and_judge(*list(map(int, list(reply_text))))
+                        result = poker_player.change_and_judge(
+                            *list(map(int, list(reply_text))))
                         break
 
         else:
