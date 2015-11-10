@@ -8,7 +8,7 @@ import auth
 
 class MyTwitterLib(object):
 
-    # 認証(やり方要検討)
+    # 認証
     def __init__(self, CK, CS, AT, AS):
         self.session = OAuth1Session(CK, CS, AT, AS)
 
@@ -54,13 +54,13 @@ class MyTwitterLib(object):
     def get_mentions(self, num):
         url = "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
 
+        # 最後に取得したmentionのIDを取得
         try:
             f = open("since_id.txt", "r")
             since_id = f.readline()
             f.close()
         except IOError:
             print("MyTwitterLib: since_id.txt does not exist.")
-            # exit(1)
             since_id = ""
 
         if since_id != "":
@@ -76,6 +76,7 @@ class MyTwitterLib(object):
             # json形式で取得したタイムラインをパース
             mentions = list(map(Tweet, json.loads(req.text)))
 
+            # 取得した最新のmentionのIDを記録
             if mentions != []:
                 with open("since_id.txt", "w") as f:
                     f.write(mentions[0].tweet_id)
@@ -93,27 +94,18 @@ class MyTwitterLib(object):
 
         req = self.session.post(url, params=params)
 
-        # ツイート成功
-        if req.status_code == 200:
-            return 0
-        else:
-            print("Error code {}: Failed to tweet.".format(req.status_code))
-            return -1
+        return req.status_code
 
     # リプライ
-    def reply(self, base_mention, text):
+    def reply(self, to_mention, text):
         url = "https://api.twitter.com/1.1/statuses/update.json"
-        params = {"status": "@" + base_mention.user_id + " " + text,
-                  "in_reply_to_status_id": base_mention.tweet_id}
+        params = {"status": "@" + to_mention.user_id + " " + text,
+                  "in_reply_to_status_id": to_mention.tweet_id}
 
         req = self.session.post(url, params=params)
 
-        # ツイート成功
-        if req.status_code == 200:
-            return 0
-        else:
-            print("Error code {}: Failed to reply.".format(req.status_code))
-            return -1
+        return req.status_code
+
 
 
 class Tweet(object):
@@ -144,4 +136,4 @@ if __name__ == '__main__':
     print(mentions)
     for m in mentions:
         print(m.__dict__)
-    # twitter.tweet("ツイートテストだお")
+    # twitter.tweet("ツイートテスト")
