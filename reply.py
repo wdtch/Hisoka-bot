@@ -18,19 +18,14 @@ import poker
 import mytwitterlib
 
 
-mention_url = "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
-tweet_url = "https://api.twitter.com/1.1/statuses/update.json"
-
-
 class AutoReply(object):
 
     def __init__(self):
-        # self.logger = logging.getLogger(__name__)
-        # self.logger.setLevel(logging.INFO)
         self.twitterlib = mytwitterlib.MyTwitterLib(
             auth.CK, auth.CS, auth.AT, auth.AS)
 
     def handle_mention(self):
+        """メンションを解析し、自動リプライを実行"""
         mentions = self.twitterlib.get_mentions(50)
 
         if mentions is None:
@@ -42,30 +37,32 @@ class AutoReply(object):
                 self._reply(mention)
 
     def _reply(self, mention):
+        """受け取ったメンションの内容に応じて自動的にリプライを送信する"""
+
         # 以下のre.search()は部分一致
         # 第一引数に書いた文字列がツイートに含まれれば、内容に応じたreply_textを構築してリプライで返す
-        # いずれは反応語句とそれに対するリプライを対にした辞書かなんかをまとめたファイルを使いたい
         if re.search(r"おはよう", mention.text):
             # おはようを返す
             reply_text = "おはよう"
-            self.twitterlib.reply(mention, reply_text)
+            status_code = self.twitterlib.reply(mention, reply_text)
+            self._handle_status(status_code)
 
         # おやすみもおはようと同様
         elif re.search(r"おやすみ", mention.text):
             reply_text = "おやすみ"
-            self.twitterlib.reply(mention, reply_text)
+            status_code = self.twitterlib.reply(mention, reply_text)
+            self._handle_status(status_code)
 
         # 「占って」というリプライに対して占いを実行し、結果をリプライで返す
         elif re.search(r"占って", mention.text):
             reply_text = self._fortune(mention)
-            self.twitterlib.reply(mention, reply_text)
+            status_code = self.twitterlib.reply(mention, reply_text)
+            self._handle_status(status_code)
 
         # 「ポーカー」というリプライに対してポーカーを実行
         elif re.search(r"ポーカー", mention.text):
             # 勝ったプレイヤーを表す文字列が返ってくる
-            print("play poker.")
             result = self._play_poker(mention)
-            print("result: {}".format(result))
 
             if result is not None:
                 if result[0] == "player":
@@ -79,13 +76,15 @@ class AutoReply(object):
                         "hisoka: " + result[2] + "\n" + "Draw!"
                 else:
                     reply_text = "something wrong."
-                self.twitterlib.reply(mention, reply_text)
+                status_code = self.twitterlib.reply(mention, reply_text)
+                self._handle_status(status_code)
 
         else:
             # ヒットしなければリプライを送らない
             pass
 
     def _fortune(self, mention):
+        """占いを実行し、結果を表す文を返す"""
         faf = fortune.FourAceFortune()
         result = faf.fortune()
 
@@ -116,10 +115,10 @@ class AutoReply(object):
         first = poker_player.first_hand_str()
         first_reply = "最初の手札は\n" + \
             first + "\n" + "です。"
-        self.twitterlib.reply(mention, first_reply)
+        status_code = self.twitterlib.reply(mention, first_reply)
+        self._handle_status(status_code)
 
         # 1分後にメンションをチェック
-        print("Waiting for deciding the card to change...")
         sleep(60)
 
         mentions = self.twitterlib.get_mentions(10)
@@ -133,31 +132,28 @@ class AutoReply(object):
             # ポーカーを要求した人と同一人物からのメンションを探す
             if got_mention.user_id == first_user_id:
                 # "@[user_id] number"という形式のリプライを空白で区切って前を捨てる
-                reply_text = got_mention.text.split()[1]
+                cards_to_change = got_mention.text.split()[1]
                 # フォーマット(1〜5の数字が5文字以下)に合うかチェック
-                if re.match(r"^[0-5]{1,5}$", reply_text):
-                    # reply_textには、"13"のように交換したい手札の番号が連続して書かれている
-                    # list(reply_text)で、"13"から["1", "3"]という1文字ずつのリストを作る
+                if re.match(r"^[0-5]{1,5}$", cards_to_change):
+                    # cards_to_changeには、"13"のように交換したい手札の番号が連続して書かれている
+                    # list(cards_to_change)で、"13"から["1", "3"]という1文字ずつのリストを作る
                     # map(int, ...)で、リストの各要素をint型に変換
                     # *list(...)で、int型の数字をばらしてポーカー関数に渡す
                     result = poker_player.change_and_judge(
-                        *list(map(int, list(reply_text))))
+                        *list(map(int, list(cards_to_change))))
                     break
-
-        else:
-            # リプライを読み込めなかった場合
-            print(
-                "Error code {}: Failed to get mentions.".format(req.status_code))
 
         return result
 
+    def _handle_status(self, code):
+        """ステータスコードを受け取って、コードに応じたログを出力する"""
+        if code == 200:
+            print("Succeeded.")
+        else:
+            print("Error: Status code {}".format(code))
 
-# @b_scheduler.scheduled_job("interval", minutes=1)
-# def run():
-#     ar.handle_mention()
 
 if __name__ == '__main__':
     # 単体実行時にリプライを取得、自動返信
-    # b_scheduler = BlockingScheduler()
     ar = AutoReply()
     ar.handle_mention()
