@@ -5,49 +5,42 @@ from __future__ import print_function
 from apscheduler.schedulers.blocking import BlockingScheduler
 import random
 import auth
+import mytwitterlib
 
 
 class RegularTweet(object):
 
     def __init__(self):
-        self._f = open("random_tweet.txt")
-        self.tweets = list(self._f.readlines())
+        with open("random_tweet.txt") as _f:
+            self.tweets = list(_f.readlines())
+        self.twitterlib = mytwitterlib.MyTwitterLib(
+            auth.CK, auth.CS, auth.AT, auth.AS)
 
-    # 30分毎に定期ツイート
-    # @b_scheduler.scheduled_job("interval", minutes=30)
     def regular_tweet(self):
         tweet = random.choice(self.tweets)
         print("Tweet: {0}".format(tweet))
-        params = {"status": tweet}
-
-        # OAuth認証でPOST methodを用いてツイートを投稿
-        tweet_url = "https://api.twitter.com/1.1/statuses/update.json"
-        req = auth.twitter.post(tweet_url, params=params)
+        status = self.twitterlib.tweet(tweet)
 
         # レスポンスを確認
-        if req.status_code == 200:
-            print("Tweet Succeeded.")
-        elif req.status_code == 403: # 重複したとき
+        if status == 200:
+            print("Regular Tweet Succeeded.")
+        elif status == 403: # 重複したとき
             self.tweet_again() # リトライ
         else:
-            print("Failed to tweet. Error code: {0}".format(req.status_code))
+            print("Failed to tweet. Status code: {}".format(status))
 
     # ツイートが失敗した時のリトライ用メソッド
     def tweet_again(self):
         tweet = random.choice(self.tweets)
-        params = {"status": tweet}
-
-        # OAuth認証でPOST methodを用いてツイートを投稿
-        tweet_url = "https://api.twitter.com/1.1/statuses/update.json"
-        req = auth.twitter.post(tweet_url, params=params)
+        status = self.twitterlib.tweet(tweet)
 
         # レスポンスを確認
-        if req.status_code == 200:
-            print("Retry - Tweet Succeeded.")
+        if status == 200:
+            print("Retry - Regular Tweet Succeeded.")
         else:
-            print("Retry Failed - Status Code {0}".format(req.status_code))
+            print("Retry Failed. Status Code: {}".format(status))
 
-# 単体実行時に30分毎に定期ツイートを実行
+# 単体実行時に1分毎に定期ツイートを実行
 b_scheduler = BlockingScheduler()
 reg = RegularTweet()
 
