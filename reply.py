@@ -9,6 +9,7 @@ from requests_oauthlib import OAuth1Session
 import json
 import re
 import logging
+import random
 from time import sleep
 from apscheduler.schedulers.blocking import BlockingScheduler
 import auth
@@ -41,15 +42,22 @@ class AutoReply(object):
 
         # 以下のre.search()は部分一致
         # 第一引数に書いた文字列がツイートに含まれれば、内容に応じたreply_textを構築してリプライで返す
+
+        # おはようを返す
         if re.search(r"おはよう", mention.text):
-            # おはようを返す
-            reply_text = "おはよう"
+            with open("morning.txt") as f:
+                tweets = list(f.readlines())
+            reply_text = random.choice(tweets)
+
             status_code = self.twitterlib.reply(mention, reply_text)
             self._handle_status(status_code)
 
         # おやすみもおはようと同様
         elif re.search(r"おやすみ", mention.text):
-            reply_text = "おやすみ"
+            with open("night.txt") as f:
+                tweets = list(f.readlines())
+            reply_text = random.choice(tweets)
+
             status_code = self.twitterlib.reply(mention, reply_text)
             self._handle_status(status_code)
 
