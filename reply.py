@@ -74,16 +74,16 @@ class AutoReply(object):
 
             if result is not None:
                 if result[0] == "player":
-                    reply_text = "\n" + "you: " + result[1] + "\n" + \
-                        "hisoka: " + result[2] + "\n" + "You win!"
+                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
+                        "ボクの手札は\n" + result[2] + "\n" + "だから…キミの勝ち、だね♠"
                 elif result[0] == "hisoka":
-                    reply_text = "\n" + "you: " + result[1] + "\n" + \
-                        "hisoka: " + result[2] + "\n" + "You lose!"
+                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
+                        "ボクの手札は" + result[2] + "\n" + "だから…ボクの勝ち、だね♥"
                 elif result[0] == "draw":
-                    reply_text = "\n" + "you: " + result[1] + "\n" + \
-                        "hisoka: " + result[2] + "\n" + "Draw!"
+                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
+                        "ボクの手札は" + result[2] + "\n" + "だから…引き分け、だね♦"
                 else:
-                    reply_text = "something wrong."
+                    reply_text = "ポーカーでエラーが発生しました。"
                 status_code = self.twitterlib.reply(mention, reply_text)
                 self._handle_status(status_code)
 
@@ -97,15 +97,15 @@ class AutoReply(object):
         result = faf.fortune()
 
         if result == 0:
-            reply_text = "you are very lucky!!!"
+            reply_text = "占いの結果は…すごくラッキーみたいだよ♥"
         elif result == 1:
-            reply_text = "you are lucky!"
+            reply_text = "占いの結果は…今日はラッキーな日みたいだね♦"
         elif result == 2:
-            reply_text = "you are not lucky or unlucky."
+            reply_text = "占いの結果は…今日はまあまあってとこかな♣"
         elif result == 3:
-            reply_text = "Perhaps you are unlucky..."
+            reply_text = "占いの結果は…あんまりよくないね♠今日はちょっと気をつけたほうがいいかもね…♠"
         elif result == 4:
-            reply_text = "Something wrong."
+            reply_text = "占いでエラーが発生しました。"
 
         return reply_text
 
@@ -121,13 +121,13 @@ class AutoReply(object):
 
         # 最初の手札を送信
         first = poker_player.first_hand_str()
-        first_reply = "最初の手札は\n" + \
-            first + "\n" + "です。"
+        first_reply = "キミの最初の手札は\n" + \
+            first + "\n" + "だよ♦交換したい手札の数字をリプライで送ってね♦"
         status_code = self.twitterlib.reply(mention, first_reply)
         self._handle_status(status_code)
 
-        # 1分後にメンションをチェック
-        sleep(60)
+        # 1分半後にメンションをチェック
+        sleep(90)
 
         mentions = self.twitterlib.get_mentions(10)
 

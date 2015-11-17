@@ -18,7 +18,7 @@ class RegularTweet(object):
 
     def regular_tweet(self):
         tweet = random.choice(self.tweets)
-        print("Tweet: {0}".format(tweet))
+        # print("Tweet: {0}".format(tweet))
         status = self.twitterlib.tweet(tweet)
 
         # レスポンスを確認

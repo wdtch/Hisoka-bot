@@ -76,10 +76,6 @@ class FourAceFortune(CardManager):
         return self._print_result(turn)
 
     def _print_result(self, turn):
-        # if isbad_fortune:
-        #     print("Be careful, you may meet with misfortune...")
-        #     return 4
-        # else:
         if turn == 0:
             # print("you are very lucky!!!")
             return 0
@@ -105,7 +101,7 @@ if __name__ == '__main__':
     n = 0
     u = 0
     e = 0
-    for _ in range(1000):
+    for _ in range(10000):
         faf = FourAceFortune()
         num = faf.fortune()
         if num == 0:
