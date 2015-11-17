@@ -9,11 +9,9 @@ b_scheduler = BlockingScheduler()
 reg_man = regular_tweet.RegularTweet()
 reply_man = reply.AutoReply()
 
-# @b_scheduler.scheduled_job("interval", minutes=3)
 def run_reply():
     reply_man.get_reply()
 
-# @b_scheduler.scheduled_job("interval", minutes=30)
 def run_regular_tweet():
     reg_man.regular_tweet()
 
