@@ -3,7 +3,6 @@
 
 import json
 from requests_oauthlib import OAuth1Session
-import auth
 
 
 class MyTwitterLib(object):

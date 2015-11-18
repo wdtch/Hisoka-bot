@@ -17,7 +17,6 @@ class FourAceFortune(CardManager):
     def fortune(self):
         turn = 0
         ace_count = 0
-        isbad_fortune = False
         for _ in range(3):
             # print("--- Turn {} ---".format(turn))
 

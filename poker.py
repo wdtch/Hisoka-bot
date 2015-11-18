@@ -184,6 +184,7 @@ class Judge(object):
             is_one = False
         return is_one
 
+
 class Poker(object):
 
     """ポーカーを行うためのオブジェクト"""
@@ -229,13 +230,6 @@ class Poker(object):
             return ("hisoka", ph_str, hh_str)
         else:
             return ("draw", ph_str, hh_str)
-
-    # def play(self):
-    #     """ポーカーをプレイする関数
-    #        最初の手札を表示し、プレイヤーから入力された番号に応じて
-    #        手札を交換する
-    #        その後役を判定し、勝敗を判定して結果を表す文字列を返す"""
-
 
 
 # テスト

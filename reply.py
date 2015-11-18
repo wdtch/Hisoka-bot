@@ -5,15 +5,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-from requests_oauthlib import OAuth1Session
-import json
 import re
-import logging
 import random
 from time import sleep
-from apscheduler.schedulers.blocking import BlockingScheduler
 import auth
-import card
 import fortune
 import poker
 import mytwitterlib
@@ -30,7 +25,7 @@ class AutoReply(object):
         mentions = self.twitterlib.get_mentions(50)
 
         if mentions is None:
-            print("Error code {}: Failed to get mentions.".format(req.status_code))
+            print("Failed to get mentions.")
         elif mentions == []:
             print("No mentions gotten.")
         else:
