@@ -10,7 +10,7 @@ reg_man = regular_tweet.RegularTweet()
 reply_man = reply.AutoReply()
 
 def run_reply():
-    reply_man.get_reply()
+    reply_man.handle_mention()
 
 def run_regular_tweet():
     reg_man.regular_tweet()
