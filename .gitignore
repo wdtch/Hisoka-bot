@@ -55,3 +55,24 @@ docs/_build/
 
 # PyBuilder
 target/
+
+.DS_Store
+auth.py
+morning.txt
+night.txt
+Procfile
+requirements.txt
+rntime.txt
+since_id.txt
+bin/
+include/
+keys.py
+man/
+pip-selfcheck.json
+schedule.py
+share/
+temp/
+timeline_test.py
+tweet_test.py
+
+*.pyc
