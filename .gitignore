@@ -58,21 +58,23 @@ target/
 
 .DS_Store
 auth.py
+keys.py
 morning.txt
 night.txt
-Procfile
-requirements.txt
-rntime.txt
-since_id.txt
-bin/
-include/
-keys.py
-man/
 pip-selfcheck.json
+Procfile
+random_tweet.txt
+regular_test.py
+requirements.txt
+runtime.txt
 schedule.py
-share/
-temp/
+since_id.txt
 timeline_test.py
 tweet_test.py
+bin/
+include/
+man/
+share/
+temp/
 
 *.pyc
