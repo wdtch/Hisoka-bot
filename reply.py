@@ -57,7 +57,7 @@ class AutoReply(object):
             self._handle_status(status_code)
 
         # 「占って」というリプライに対して占いを実行し、結果をリプライで返す
-        elif re.search(r"占って", mention.text):
+        elif re.search(r"占って|うらなって", mention.text):
             reply_text = self._fortune(mention)
             status_code = self.twitterlib.reply(mention, reply_text)
             self._handle_status(status_code)
