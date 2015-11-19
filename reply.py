@@ -136,7 +136,7 @@ class AutoReply(object):
             if got_mention.user_id == first_user_id:
                 # "@[user_id] number"という形式のリプライを空白で区切って前を捨てる
                 cards_to_change = got_mention.text.split()[1]
-                # フォーマット(1〜5の数字が5文字以下)に合うかチェック
+                # フォーマット(0〜5の数字が5文字以下)に合うかチェック
                 if re.match(r"^[0-5]{1,5}$", cards_to_change):
                     # cards_to_changeには、"13"のように交換したい手札の番号が連続して書かれている
                     # list(cards_to_change)で、"13"から["1", "3"]という1文字ずつのリストを作る
