@@ -3,6 +3,10 @@
 
 import json
 from requests_oauthlib import OAuth1Session
+import ftputil
+
+# myfile
+import ftpauth
 
 
 class MyTwitterLib(object):
@@ -15,18 +19,15 @@ class MyTwitterLib(object):
     def get_timeline(self, num):
         url = "https://api.twitter.com/1.1/statuses/home_timeline.json"
 
-        try:
-            f = open("since_id.txt", "r")
-            since_id = f.readline()
-            f.close()
-        except IOError:
-            print("MyTwitterLib: since_id.txt does not exist.")
-            # exit(1)
-            since_id = ""
+        _ftp = ftputil.FTPHost(ftpauth.host, ftpauth.user, ftpauth.pwd)
+        print("FTP Access Succeeded.")
 
-        if since_id != "":
+        if _ftp.path.exists("./since_id_tl.txt"):
+            with _ftp.open("./since_id_tl.txt") as f:
+                since_id = f.readline()
             params = {"count": num, "since_id": since_id}
         else:
+            since_id = ""
             params = {"count": num}
 
         # OAuthでGETメソッドを用いてタイムラインを取得
@@ -38,7 +39,7 @@ class MyTwitterLib(object):
             timeline = list(map(Tweet, json.loads(req.text)))
 
             if timeline != []:
-                with open("since_id.txt", "w") as f:
+                with _ftp.open("./since_id_tl.txt", "w") as f:
                     f.write(timeline[0].tweet_id)
 
             return timeline
@@ -54,17 +55,13 @@ class MyTwitterLib(object):
         url = "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
 
         # 最後に取得したmentionのIDを取得
-        try:
-            f = open("since_id.txt", "r")
-            since_id = f.readline()
-            f.close()
-        except IOError:
-            print("MyTwitterLib: since_id.txt does not exist.")
-            since_id = ""
-
-        if since_id != "":
+        _ftp = ftputil.FTPHost(ftpauth.host, ftpauth.user, ftpauth.pwd)
+        if _ftp.path.exists("./since_id_m.txt"):
+            with _ftp.open("./since_id_m.txt") as f:
+                since_id = f.readline()
             params = {"count": num, "since_id": since_id}
         else:
+            since_id = ""
             params = {"count": num}
 
         # OAuthでGETメソッドを用いてタイムラインを取得
@@ -77,7 +74,7 @@ class MyTwitterLib(object):
 
             # 取得した最新のmentionのIDを記録
             if mentions != []:
-                with open("since_id.txt", "w") as f:
+                with _ftp.open("./since_id_tl.txt", "w") as f:
                     f.write(mentions[0].tweet_id)
 
             return mentions
@@ -120,19 +117,18 @@ class Tweet(object):
 
 # test
 if __name__ == '__main__':
-    # import auth
-    twitter = MyTwitterLib()
-
-    with open("since_id.txt", "r") as f:
-        since_id = f.readline()
+    import auth
+    twitter = MyTwitterLib(auth.CK, auth.CS, auth.AT, auth.AS)
 
     timeline = twitter.get_timeline(10)
     print(timeline)
     for tl in timeline:
         print(tl.__dict__)
+        print("")
 
     mentions = twitter.get_mentions(10)
     print(mentions)
     for m in mentions:
         print(m.__dict__)
+        print("")
     # twitter.tweet("ツイートテスト")
