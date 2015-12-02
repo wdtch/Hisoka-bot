@@ -57,18 +57,25 @@ docs/_build/
 target/
 
 .DS_Store
+auth.py
+ftpauth.py
 keys.py
+morning.txt
+night.txt
 pip-selfcheck.json
+Procfile
 random_tweet.txt
 regular_test.py
+requirements.txt
 runtime.txt
 schedule.py
-since_id.txt
+test.txt
 timeline_test.py
 tweet_test.py
 bin/
 include/
 man/
 share/
+temp/
 
 *.pyc
