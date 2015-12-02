@@ -56,7 +56,7 @@ class CardManager(object):
         self._ranks_f = (7, 8, 9, 10, 11, 12, 13, 14)
 
     def _generate_card(self):
-        """トランプのカード1枚を表すタプルを生成して返す"""
+        """トランプのカード1枚を生成して返す"""
         card = Card(random.choice(self._suits), random.choice(self._ranks))
         return card
 
@@ -77,7 +77,7 @@ class CardManager(object):
         return hand
 
     def _generate_card_f(self):
-        """占い用のトランプのカード1枚を表すタプルを生成して返す"""
+        """占い用のトランプのカード1枚を生成して返す"""
         card = Card(random.choice(self._suits), random.choice(self._ranks_f))
         return card
 

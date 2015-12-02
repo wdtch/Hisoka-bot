@@ -3,6 +3,9 @@
 import unittest
 import copy
 import operator
+import os
+import sys
+sys.path.append(os.pardir)
 import card
 import poker
 
