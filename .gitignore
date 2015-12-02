@@ -57,15 +57,10 @@ docs/_build/
 target/
 
 .DS_Store
-auth.py
 keys.py
-morning.txt
-night.txt
 pip-selfcheck.json
-Procfile
 random_tweet.txt
 regular_test.py
-requirements.txt
 runtime.txt
 schedule.py
 since_id.txt
@@ -75,6 +70,5 @@ bin/
 include/
 man/
 share/
-temp/
 
 *.pyc
