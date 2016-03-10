@@ -33,14 +33,10 @@ class Judge(object):
         # 手札の役を判定
         # IntEnumの値 + (役の数字)を返す
 
-        # handのソートテスト
-        # print(*hand)
         hand_sorted = sorted(hand, key=operator.attrgetter("rank"))
-        # print(*hand_sorted)
 
         # 強い役から順に判定していく
         self.strongest = hand_sorted[len(hand_sorted) - 1].rank
-        # print(self.strongest)
 
         # ロイヤルストレートフラッシュ
         if self._is_royal_straight_flush(hand_sorted):
@@ -200,15 +196,17 @@ class Poker(object):
         """最初の手札を文字列化して返す関数"""
         # 文字列化した手札を返す
         # reply.py側で交換するカードを引数にしてchange_and_judge関数を実行してもらう
-        return " ".join(map(str, self._player_hand.hand_list))
+        return " ".join(list(map(lambda t: "{0}:{1}".format(t[0], str(t[1])),
+                                 zip(range(1, len(self._player_hand.hand_list)+1),
+                                     self._player_hand.hand_list))))
 
     def change_and_judge(self, *nums):
         """プレイヤーの手札のうち交換するカードの番号を受取り、その番号の
            カードを交換したのち、手札の役を判定する関数
            判定関数に手札を渡し、返ってきた点数を結果表示関数に渡す"""
-        # 交換するカードの番号を受取る
-        # 交換を実行
-        # 役判定関数に渡す
+        # 1. 交換するカードの番号を受取る
+        # 2. 交換を実行
+        # 3. 役判定関数に渡す
         for num in nums:
             if 1 <= num <= 5:
                 self._player_hand.change(num)
@@ -219,9 +217,7 @@ class Poker(object):
         return self._result(result_p, result_h)
 
     def _result(self, result1, result2):
-        # judge関数が生成した結果をもとに、カード一覧と、勝敗を表す文字列を返す
-        # 点数の大小比較だけでできるはず
-        # str(card)でカードを文字列化できる模様
+        """judge関数が生成した結果をもとに、カード一覧と、勝敗を表す文字列を返す"""
         ph_str = " ".join(map(str, self._player_hand.hand_list))
         hh_str = " ".join(map(str, self._hisoka_hand.hand_list))
         if result1 > result2:
