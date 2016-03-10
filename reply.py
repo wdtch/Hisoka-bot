@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+import os
 import re
 import random
 from time import sleep
-import auth
+
 import fortune
 import poker
 import mytwitterlib
@@ -14,8 +15,10 @@ import mytwitterlib
 class AutoReply(object):
 
     def __init__(self):
-        self.twitterlib = mytwitterlib.MyTwitterLib(
-            auth.CK, auth.CS, auth.AT, auth.AS)
+        self.twitterlib = mytwitterlib.MyTwitterLib(os.getenv("CK"),
+                                                    os.getenv("CS"),
+                                                    os.getenv("AT"),
+                                                    os.getenv("AS"))
 
     def handle_mention(self):
         """メンションを解析し、自動リプライを実行"""

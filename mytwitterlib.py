@@ -2,11 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 from requests_oauthlib import OAuth1Session
 import ftputil
-
-# myfile
-import ftpauth
 
 
 class MyTwitterLib(object):
@@ -19,7 +17,9 @@ class MyTwitterLib(object):
     def get_timeline(self, num):
         url = "https://api.twitter.com/1.1/statuses/home_timeline.json"
 
-        _ftp = ftputil.FTPHost(ftpauth.host, ftpauth.user, ftpauth.pwd)
+        _ftp = ftputil.FTPHost(os.getenv("FTPHOST"),
+                               os.getenv("FTPUSERNAME"),
+                               os.getenv("FTPPASSWORD"))
         print("FTP Access Succeeded.")
 
         if _ftp.path.exists("./since_id_tl.txt"):

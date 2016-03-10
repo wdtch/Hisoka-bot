@@ -3,8 +3,9 @@
 
 from __future__ import print_function
 from apscheduler.schedulers.blocking import BlockingScheduler
+import os
 import random
-import auth
+
 import mytwitterlib
 
 
@@ -13,8 +14,10 @@ class RegularTweet(object):
     def __init__(self):
         with open("random_tweet.txt") as _f:
             self.tweets = list(_f.readlines())
-        self.twitterlib = mytwitterlib.MyTwitterLib(
-            auth.CK, auth.CS, auth.AT, auth.AS)
+        self.twitterlib = mytwitterlib.MyTwitterLib(os.getenv("CK"),
+                                                    os.getenv("CS"),
+                                                    os.getenv("AT"),
+                                                    os.getenv("AS"))
 
     def regular_tweet(self):
         tweet = random.choice(self.tweets)
