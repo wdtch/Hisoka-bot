@@ -55,7 +55,9 @@ class MyTwitterLib(object):
         url = "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
 
         # 最後に取得したmentionのIDを取得
-        _ftp = ftputil.FTPHost(ftpauth.host, ftpauth.user, ftpauth.pwd)
+        _ftp = ftputil.FTPHost(os.getenv("FTPHOST"),
+                               os.getenv("FTPUSERNAME"),
+                               os.getenv("FTPPASSWORD"))
         if _ftp.path.exists("./since_id_m.txt"):
             with _ftp.open("./since_id_m.txt") as f:
                 since_id = f.readline()
@@ -74,7 +76,9 @@ class MyTwitterLib(object):
 
             # 取得した最新のmentionのIDを記録
             if mentions != []:
-                _ftp = ftputil.FTPHost(ftpauth.host, ftpauth.user, ftpauth.pwd)
+                _ftp = ftputil.FTPHost(os.getenv("FTPHOST"),
+                               os.getenv("FTPUSERNAME"),
+                               os.getenv("FTPPASSWORD"))
                 with _ftp.open("./since_id_m.txt", "w") as f:
                     f.write(mentions[0].tweet_id)
 
