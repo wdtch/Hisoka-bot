@@ -117,7 +117,7 @@ class AutoReply(object):
         # 最初の手札を送信
         first = poker_player.first_hand_str()
         first_reply = "キミの最初の手札は\n" + \
-            first + "\n" + "だよ♦交換したい手札の数字をリプライで送ってね♦"
+            first + "\n" + "だよ♦交換したい手札の番号をリプライで送ってね♦"
         status_code = self.twitterlib.reply(mention, first_reply)
         self._handle_status(status_code)
 
