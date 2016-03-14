@@ -73,12 +73,12 @@ class AutoReply(object):
                         "ボクの手札は\n" + result[2] + "\n" + "だから…キミの勝ち、だね♠"
                 elif result[0] == "hisoka":
                     reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
-                        "ボクの手札は" + result[2] + "\n" + "だから…ボクの勝ち、だね♥"
+                        "ボクの手札は\n" + result[2] + "\n" + "だから…ボクの勝ち、だね♥"
                 elif result[0] == "draw":
                     reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
-                        "ボクの手札は" + result[2] + "\n" + "だから…引き分け、だね♦"
+                        "ボクの手札は\n" + result[2] + "\n" + "だから…引き分け、だね♦"
                 else:
-                    reply_text = "ポーカーでエラーが発生しました。"
+                    reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。"
                 status_code = self.twitterlib.reply(mention, reply_text)
                 self._handle_status(status_code)
 
