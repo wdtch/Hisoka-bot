@@ -121,8 +121,8 @@ class AutoReply(object):
         status_code = self.twitterlib.reply(mention, first_reply)
         self._handle_status(status_code)
 
-        # 1分半後にメンションをチェック
-        sleep(90)
+        # 3分後にメンションをチェック
+        sleep(180)
 
         mentions = self.twitterlib.get_mentions(10)
 
