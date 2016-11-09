@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from enum import IntEnum
-from card import *
 import operator
+import threading
+
+from card import *
 
 
 class Hands(IntEnum):
@@ -228,7 +230,45 @@ class Poker(object):
             return ("draw", ph_str, hh_str)
 
 
+class PokerThread(threading.Thread):
+    """ポーカーを処理する際に作成するスレッド"""
+    def __init__(self, replyobj, mention):
+        super().__init__()
+        self.replyobj = replyobj
+        self.mention = mention
+
+    def run(self):
+        # 勝ったプレイヤーを表す文字列が返ってくる
+            result = replyobj._play_poker(mention)
+
+            if result is not None:
+                if result[0] == "player":
+                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
+                        "ボクの手札は\n" + result[2] + "\n" + "だから…キミの勝ち、だね♠"
+                elif result[0] == "hisoka":
+                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
+                        "ボクの手札は\n" + result[2] + "\n" + "だから…ボクの勝ち、だね♥"
+                elif result[0] == "draw":
+                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
+                        "ボクの手札は\n" + result[2] + "\n" + "だから…引き分け、だね♦"
+                else:
+                    reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。"
+                status_code = replyobj.twitterlib.reply(mention, reply_text)
+                replyobj._handle_status(status_code)
+
+
+def is_valid_changenum(char):
+    if char in ["0", "1", "2", "3", "4", "5"]:
+        return True
+    else:
+        return False
+
+def get_changenum(mention):
+    return list(set(filter(is_valid_changenum, list(mention))))
+
+
 # テスト
 if __name__ == '__main__':
     poker = Poker()
     poker.judge(poker._player_hand)
+

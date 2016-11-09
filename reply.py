@@ -64,23 +64,7 @@ class AutoReply(object):
 
         # 「ポーカー」というリプライに対してポーカーを実行
         elif re.search(r"ポーカー", mention.text):
-            # 勝ったプレイヤーを表す文字列が返ってくる
-            result = self._play_poker(mention)
 
-            if result is not None:
-                if result[0] == "player":
-                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
-                        "ボクの手札は\n" + result[2] + "\n" + "だから…キミの勝ち、だね♠"
-                elif result[0] == "hisoka":
-                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
-                        "ボクの手札は\n" + result[2] + "\n" + "だから…ボクの勝ち、だね♥"
-                elif result[0] == "draw":
-                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
-                        "ボクの手札は\n" + result[2] + "\n" + "だから…引き分け、だね♦"
-                else:
-                    reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。"
-                status_code = self.twitterlib.reply(mention, reply_text)
-                self._handle_status(status_code)
 
         else:
             # ヒットしなければリプライを送らない
