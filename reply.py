@@ -105,8 +105,8 @@ class AutoReply(object):
         status_code = self.twitterlib.reply(mention, first_reply)
         self._handle_status(status_code, "Poker")
 
-        # 5分間30秒ごとにメンションをチェック
-        for _ in range(10):
+        # 5分間1分ごとにメンションをチェック
+        for _ in range(5):
             mentions = self.twitterlib.get_mentions(10, record=False)
             # 各ツイートの本文を表示、内容を解析
             # 手札交換のフォーマットに則ったメンションがあれば交換を実行
@@ -114,10 +114,12 @@ class AutoReply(object):
             for got_mention in mentions:
                 # ポーカーを要求した人と同一人物からのメンションを探す
                 if got_mention.user_id == first_user_id and re.search(r"[0-6]", got_mention.text):
+                    print("Poker: Found designation of cards to change.")
                     return poker_player.change_and_judge(list(map(int, poker.get_changenum(got_mention.text))))
 
-            sleep(30)
+            sleep(60)
 
+        print("Poker: No desianation found.")
         return poker_player.change_and_judge([])
 
     def _handle_status(self, code, kind):
