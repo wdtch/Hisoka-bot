@@ -202,8 +202,8 @@ class Poker(object):
                                  zip(range(1, len(self._player_hand.hand_list)+1),
                                      self._player_hand.hand_list))))
 
-    def change_and_judge(self, *nums):
-        """プレイヤーの手札のうち交換するカードの番号を受取り、その番号の
+    def change_and_judge(self, nums):
+        """プレイヤーの手札のうち交換するカードの番号リストを受取り、その番号の
            カードを交換したのち、手札の役を判定する関数
            判定関数に手札を渡し、返ってきた点数を結果表示関数に渡す"""
         # 1. 交換するカードの番号を受取る
