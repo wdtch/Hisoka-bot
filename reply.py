@@ -105,9 +105,9 @@ class AutoReply(object):
         status_code = self.twitterlib.reply(mention, first_reply)
         self._handle_status(status_code, "Poker")
 
-        # 3分間30秒ごとにメンションをチェック
-        for _ in range(6):
-            mentions = self.twitterlib.get_mentions(10)
+        # 5分間30秒ごとにメンションをチェック
+        for _ in range(10):
+            mentions = self.twitterlib.get_mentions(10, record=False)
             # 各ツイートの本文を表示、内容を解析
             # 手札交換のフォーマットに則ったメンションがあれば交換を実行
             first_user_id = mention.user_id

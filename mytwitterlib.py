@@ -51,7 +51,7 @@ class MyTwitterLib(object):
             return None
 
     # mention取得
-    def get_mentions(self, num):
+    def get_mentions(self, num, record=True):
         url = "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
 
         # 最後に取得したmentionのIDを取得
