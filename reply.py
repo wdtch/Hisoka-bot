@@ -45,7 +45,7 @@ class AutoReply(object):
             reply_text = random.choice(tweets)
 
             status_code = self.twitterlib.reply(mention, reply_text)
-            self._handle_status(status_code)
+            self._handle_status(status_code, "Ohayo")
 
         # おやすみもおはようと同様
         elif re.search(r"おやすみ", mention.text):
@@ -54,38 +54,18 @@ class AutoReply(object):
             reply_text = random.choice(tweets)
 
             status_code = self.twitterlib.reply(mention, reply_text)
-            self._handle_status(status_code)
+            self._handle_status(status_code, "Oyasumi")
 
         # 「占って」というリプライに対して占いを実行し、結果をリプライで返す
         elif re.search(r"占って|うらなって", mention.text):
             reply_text = self._fortune(mention)
             status_code = self.twitterlib.reply(mention, reply_text)
-            self._handle_status(status_code)
+            self._handle_status(status_code, "Fortune")
 
         # 「ポーカー」というリプライに対してポーカーを実行
         elif re.search(r"ポーカー", mention.text):
-<<<<<<< HEAD
-            # 勝ったプレイヤーを表す文字列が返ってくる
-            result = self._play_poker(mention)
-
-            if result is not None:
-                if result[0] == "player":
-                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
-                        "ボクの手札は\n" + result[2] + "\n" + "だから…キミの勝ち、だね♠"
-                elif result[0] == "hisoka":
-                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
-                        "ボクの手札は\n" + result[2] + "\n" + "だから…ボクの勝ち、だね♥"
-                elif result[0] == "draw":
-                    reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
-                        "ボクの手札は\n" + result[2] + "\n" + "だから…引き分け、だね♦"
-                else:
-                    reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。再度お試しください。"
-                status_code = self.twitterlib.reply(mention, reply_text)
-                self._handle_status(status_code)
-=======
-
->>>>>>> origin/master
-
+            pt = poker.PokerThread(self, mention)
+            pt.start()
         else:
             # ヒットしなければリプライを送らない
             pass
@@ -123,41 +103,29 @@ class AutoReply(object):
         first_reply = "キミの最初の手札は\n" + \
             first + "\n" + "だよ♦交換したい手札の番号をリプライで送ってね♦"
         status_code = self.twitterlib.reply(mention, first_reply)
-        self._handle_status(status_code)
+        self._handle_status(status_code, "Poker")
 
-        # 3分後にメンションをチェック
-        sleep(180)
+        # 3分間30秒ごとにメンションをチェック
+        for _ in range(6):
+            mentions = self.twitterlib.get_mentions(10)
+            # 各ツイートの本文を表示、内容を解析
+            # 手札交換のフォーマットに則ったメンションがあれば交換を実行
+            first_user_id = mention.user_id
+            for got_mention in mentions:
+                # ポーカーを要求した人と同一人物からのメンションを探す
+                if got_mention.user_id == first_user_id and re.search(r"[0-6]", got_mention.text):
+                    return list(map(int, poker.get_changenum(got_mention)))
 
-        mentions = self.twitterlib.get_mentions(10)
+            sleep(30)
 
-        result = None
+        return []
 
-        # 各ツイートの本文を表示、内容を解析
-        # 手札交換のフォーマットに則ったメンションがあれば交換を実行
-        first_user_id = mention.user_id
-        for got_mention in mentions:
-            # ポーカーを要求した人と同一人物からのメンションを探す
-            if got_mention.user_id == first_user_id:
-                # "@[user_id] number"という形式のリプライを空白で区切って前を捨てる
-                cards_to_change = got_mention.text.split()[1]
-                # フォーマット(0〜5の数字が5文字以下)に合うかチェック
-                if re.match(r"^[0-5]{1,5}$", cards_to_change):
-                    # cards_to_changeには、"13"のように交換したい手札の番号が連続して書かれている
-                    # list(cards_to_change)で、"13"から["1", "3"]という1文字ずつのリストを作る
-                    # map(int, ...)で、リストの各要素をint型に変換
-                    # *list(...)で、int型の数字をばらしてポーカー関数に渡す
-                    result = poker_player.change_and_judge(
-                        *list(map(int, list(cards_to_change))))
-                    break
-
-        return result
-
-    def _handle_status(self, code):
+    def _handle_status(self, code, kind):
         """ステータスコードを受け取って、コードに応じたログを出力する"""
         if code == 200:
-            print("Succeeded.")
+            print("Succeeded: {}.".format(kind))
         else:
-            print("Error: Status code {}".format(code))
+            print("Error: Status code {} at {}".format(code, kind))
 
 
 if __name__ == '__main__':

@@ -16,6 +16,6 @@ def run_regular_tweet():
     reg_man.regular_tweet()
 
 if __name__ == '__main__':
-    b_scheduler.add_job(run_reply, "interval", id="run_reply", seconds=90)
+    b_scheduler.add_job(run_reply, "interval", id="run_reply", seconds=60)
     b_scheduler.add_job(run_regular_tweet, "interval", id="run_regular_tweet", minutes=30)
     b_scheduler.start()

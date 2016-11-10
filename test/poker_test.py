@@ -263,6 +263,46 @@ class TestJudgement(unittest.TestCase):
         result = self.judge.judge(hand)
         self.assertEqual(result, 13)
 
+
+class TestChangeNumberGetter(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_get_changenum1(self):
+        """ポーカーの交換カードの指定番号取得テスト1"""
+        s = "123"
+        result = poker.get_changenum(s)
+        self.assertEqual(set(result), {"1", "2", "3"})
+
+    def test_get_changenum2(self):
+        """ポーカーの交換カードの指定番号取得テスト2"""
+        s = "1122345"
+        result = poker.get_changenum(s)
+        self.assertEqual(set(result), {"1", "2", "3", "4", "5"})
+
+    def test_get_changenum3(self):
+        """ポーカーの交換カードの指定番号取得テスト3"""
+        s = "1, 2, 3"
+        result = poker.get_changenum(s)
+        self.assertEqual(set(result), {"1", "2", "3"})
+
+    def test_get_changenum4(self):
+        """ポーカーの交換カードの指定番号取得テスト4"""
+        s = "abcd"
+        result = poker.get_changenum(s)
+        self.assertEqual(set(result), set())
+
+    def test_get_changenum5(self):
+        """ポーカーの交換カードの指定番号取得テスト5"""
+        s = "13579"
+        result = poker.get_changenum(s)
+        self.assertEqual(set(result), {"1", "3", "5"})
+
+
 if __name__ == '__main__':
     # nose.main(argv=['nose', '-v'])
     unittest.main(argv=['nose', '-v'])
