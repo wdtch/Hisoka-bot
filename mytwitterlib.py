@@ -75,10 +75,10 @@ class MyTwitterLib(object):
             mentions = list(map(Tweet, json.loads(req.text)))
 
             # 取得した最新のmentionのIDを記録
-            if mentions != []:
+            if record and mentions != []:
                 _ftp = ftputil.FTPHost(os.getenv("FTPHOST"),
-                               os.getenv("FTPUSERNAME"),
-                               os.getenv("FTPPASSWORD"))
+                                       os.getenv("FTPUSERNAME"),
+                                       os.getenv("FTPPASSWORD"))
                 with _ftp.open("./since_id_m.txt", "w") as f:
                     f.write(mentions[0].tweet_id)
 
