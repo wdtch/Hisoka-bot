@@ -239,7 +239,7 @@ class PokerThread(threading.Thread):
 
     def run(self):
         # 勝ったプレイヤーを表す文字列が返ってくる
-        result = replyobj._play_poker(mention)
+        result = self.replyobj._play_poker(self.mention)
 
         if result is not None:
             if result[0] == "player":
@@ -253,8 +253,8 @@ class PokerThread(threading.Thread):
                     "ボクの手札は\n" + result[2] + "\n" + "だから…引き分け、だね♦"
             else:
                 reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。"
-            status_code = replyobj.twitterlib.reply(mention, reply_text)
-            replyobj._handle_status(status_code)
+            status_code = self.replyobj.twitterlib.reply(self.mention, reply_text)
+            self.replyobj._handle_status(status_code)
 
 
 def is_valid_changenum(char):
