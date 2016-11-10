@@ -64,6 +64,7 @@ class AutoReply(object):
 
         # 「ポーカー」というリプライに対してポーカーを実行
         elif re.search(r"ポーカー", mention.text):
+<<<<<<< HEAD
             # 勝ったプレイヤーを表す文字列が返ってくる
             result = self._play_poker(mention)
 
@@ -81,6 +82,9 @@ class AutoReply(object):
                     reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。再度お試しください。"
                 status_code = self.twitterlib.reply(mention, reply_text)
                 self._handle_status(status_code)
+=======
+
+>>>>>>> origin/master
 
         else:
             # ヒットしなければリプライを送らない
