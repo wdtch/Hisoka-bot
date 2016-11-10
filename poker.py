@@ -254,7 +254,7 @@ class PokerThread(threading.Thread):
             else:
                 reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。"
             status_code = self.replyobj.twitterlib.reply(self.mention, reply_text)
-            self.replyobj._handle_status(status_code)
+            self.replyobj._handle_status(status_code, "Poker")
 
 
 def is_valid_changenum(char):
