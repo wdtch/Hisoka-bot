@@ -78,7 +78,7 @@ class AutoReply(object):
                     reply_text = "\n" + "キミの手札は\n" + result[1] + "\nで、" + \
                         "ボクの手札は\n" + result[2] + "\n" + "だから…引き分け、だね♦"
                 else:
-                    reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。"
+                    reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。再度お試しください。"
                 status_code = self.twitterlib.reply(mention, reply_text)
                 self._handle_status(status_code)
 
