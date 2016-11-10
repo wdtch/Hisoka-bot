@@ -114,7 +114,7 @@ class AutoReply(object):
             for got_mention in mentions:
                 # ポーカーを要求した人と同一人物からのメンションを探す
                 if got_mention.user_id == first_user_id and re.search(r"[0-6]", got_mention.text):
-                    return list(map(int, poker.get_changenum(got_mention)))
+                    return list(map(int, poker.get_changenum(got_mention.text)))
 
             sleep(30)
 
