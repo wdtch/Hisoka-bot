@@ -3,6 +3,7 @@
 
 from enum import IntEnum
 import operator
+from time import sleep
 import threading
 
 from card import *
