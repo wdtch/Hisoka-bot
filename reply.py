@@ -45,7 +45,7 @@ class AutoReply(object):
             reply_text = random.choice(tweets)
 
             status_code = self.twitterlib.reply(mention, reply_text)
-            self._handle_status(status_code, "Ohayo")
+            _handle_status(status_code, "Ohayo")
 
         # おやすみもおはようと同様
         elif re.search(r"おやすみ", mention.text):
@@ -54,80 +54,29 @@ class AutoReply(object):
             reply_text = random.choice(tweets)
 
             status_code = self.twitterlib.reply(mention, reply_text)
-            self._handle_status(status_code, "Oyasumi")
+            _handle_status(status_code, "Oyasumi")
 
         # 「占って」というリプライに対して占いを実行し、結果をリプライで返す
         elif re.search(r"占って|うらなって", mention.text):
-            reply_text = self._fortune(mention)
+            reply_text = fortune._fortune()
             status_code = self.twitterlib.reply(mention, reply_text)
-            self._handle_status(status_code, "Fortune")
+            _handle_status(status_code, "Fortune")
 
         # 「ポーカー」というリプライに対してポーカーを実行
         elif re.search(r"ポーカー", mention.text):
-            pt = poker.PokerThread(self, mention)
+            pt = poker.PokerThread(self.twitterlib, mention)
             pt.start()
         else:
             # ヒットしなければリプライを送らない
             pass
 
-    def _fortune(self, mention):
-        """占いを実行し、結果を表す文を返す"""
-        faf = fortune.FourAceFortune()
-        result = faf.fortune()
 
-        if result == 0:
-            reply_text = "占いの結果は…すごくラッキーみたいだよ♥"
-        elif result == 1:
-            reply_text = "占いの結果は…今日はラッキーな日みたいだね♦"
-        elif result == 2:
-            reply_text = "占いの結果は…今日はまあまあってとこかな♣"
-        elif result == 3:
-            reply_text = "占いの結果は…あんまりよくないね♠今日はちょっと気をつけたほうがいいかもね…♠"
-        elif result == 4:
-            reply_text = "占いでエラーが発生しました。"
-
-        return reply_text
-
-    def _play_poker(self, mention):
-        """ポーカーの開始を要求するメンションを受け取り、ポーカーを行う
-           リプライの宛先やパラメータを構成するのに引数のmentionを用いる
-           最初の手札をリプライで送信し、n分後にメンションを読み込む
-           ポーカーを要求したアカウントと同じものがあれば、手札の交換フォーマットに
-           沿った形式かどうかをチェックし、合っていればその数字に応じて手札を交換
-           沿っていなければ無視する
-           交換後の手札を用いてポーカーを行い、勝敗を記したテキストを含むパラメータを返す"""
-        poker_player = poker.Poker()
-
-        # 最初の手札を送信
-        first = poker_player.first_hand_str()
-        first_reply = "キミの最初の手札は\n" + \
-            first + "\n" + "だよ♦交換したい手札の番号をリプライで送ってね♦"
-        status_code = self.twitterlib.reply(mention, first_reply)
-        self._handle_status(status_code, "Poker")
-
-        # 5分間1分ごとにメンションをチェック
-        for _ in range(10):
-            sleep(30)
-
-            mentions = self.twitterlib.get_mentions(10, record=False, since_id=mention.tweet_id)
-            # 各ツイートの本文を表示、内容を解析
-            # 手札交換のフォーマットに則ったメンションがあれば交換を実行
-            first_user_id = mention.user_id
-            for got_mention in mentions:
-                # ポーカーを要求した人と同一人物からのメンションを探す
-                if got_mention.user_id == first_user_id and re.search(r"[0-6]", got_mention.text):
-                    print("Poker: Found designation of cards to change.")
-                    return poker_player.change_and_judge(list(map(int, poker.get_changenum(got_mention.text))))
-
-        print("Poker: No desianation found.")
-        return poker_player.change_and_judge([])
-
-    def _handle_status(self, code, kind):
-        """ステータスコードを受け取って、コードに応じたログを出力する"""
-        if code == 200:
-            print("Succeeded: {}.".format(kind))
-        else:
-            print("Error: Status code {} at {}".format(code, kind))
+def _handle_status(self, code, kind):
+    """ステータスコードを受け取って、コードに応じたログを出力する"""
+    if code == 200:
+        print("Succeeded: {}.".format(kind))
+    else:
+        print("Error: Status code {} at {}".format(code, kind))
 
 
 if __name__ == '__main__':

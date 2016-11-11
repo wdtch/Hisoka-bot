@@ -92,6 +92,24 @@ class FourAceFortune(CardManager):
             return 4
 
 
+def _fortune():
+    """占いを実行し、結果を表す文を返す"""
+    faf = FourAceFortune()
+    result = faf.fortune()
+
+    if result == 0:
+        reply_text = "占いの結果は…すごくラッキーみたいだよ♥"
+    elif result == 1:
+        reply_text = "占いの結果は…今日はラッキーな日みたいだね♦"
+    elif result == 2:
+        reply_text = "占いの結果は…今日はまあまあってとこかな♣"
+    elif result == 3:
+        reply_text = "占いの結果は…あんまりよくないね♠今日はちょっと気をつけたほうがいいかもね…♠"
+    elif result == 4:
+        reply_text = "占いでエラーが発生しました。"
+
+    return reply_text
+
 # テスト
 if __name__ == '__main__':
     # 1000回試行

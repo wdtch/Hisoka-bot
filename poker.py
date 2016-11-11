@@ -6,6 +6,7 @@ import operator
 import threading
 
 from card import *
+import reply
 
 
 class Hands(IntEnum):
@@ -232,14 +233,14 @@ class Poker(object):
 
 class PokerThread(threading.Thread):
     """ポーカーを処理する際に作成するスレッド"""
-    def __init__(self, replyobj, mention):
+    def __init__(self, twitterlib, mention):
         super().__init__()
-        self.replyobj = replyobj
+        self.twitterlib = twitterlib
         self.mention = mention
 
     def run(self):
         # 勝ったプレイヤーを表す文字列が返ってくる
-        result = self.replyobj._play_poker(self.mention)
+        result = _play_poker(self.mention)
 
         if result is not None:
             if result[0] == "player":
@@ -254,7 +255,7 @@ class PokerThread(threading.Thread):
             else:
                 reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。"
             status_code = self.replyobj.twitterlib.reply(self.mention, reply_text)
-            self.replyobj._handle_status(status_code, "Poker")
+            reply._handle_status(status_code, "Poker")
 
 
 def is_valid_changenum(char):
@@ -265,6 +266,40 @@ def is_valid_changenum(char):
 
 def get_changenum(mention):
     return list(set(filter(is_valid_changenum, list(mention))))
+
+def _play_poker(self, mention, twitterlib):
+        """ポーカーの開始を要求するメンションを受け取り、ポーカーを行う
+           リプライの宛先やパラメータを構成するのに引数のmentionを用いる
+           最初の手札をリプライで送信し、n分後にメンションを読み込む
+           ポーカーを要求したアカウントと同じものがあれば、手札の交換フォーマットに
+           沿った形式かどうかをチェックし、合っていればその数字に応じて手札を交換
+           沿っていなければ無視する
+           交換後の手札を用いてポーカーを行い、勝敗を記したテキストを含むパラメータを返す"""
+        poker_player = poker.Poker()
+
+        # 最初の手札を送信
+        first = poker_player.first_hand_str()
+        first_reply = "キミの最初の手札は\n" + \
+            first + "\n" + "だよ♦交換したい手札の番号をリプライで送ってね♦"
+        status_code = twitterlib.reply(mention, first_reply)
+        reply._handle_status(status_code, "Poker")
+
+        # 5分間1分ごとにメンションをチェック
+        for _ in range(10):
+            sleep(30)
+
+            mentions = twitterlib.get_mentions(10, record=False, since_id=mention.tweet_id)
+            # 各ツイートの本文を表示、内容を解析
+            # 手札交換のフォーマットに則ったメンションがあれば交換を実行
+            first_user_id = mention.user_id
+            for got_mention in mentions:
+                # ポーカーを要求した人と同一人物からのメンションを探す
+                if got_mention.user_id == first_user_id and re.search(r"[0-6]", got_mention.text):
+                    print("Poker: Found designation of cards to change.")
+                    return poker_player.change_and_judge(list(map(int, poker.get_changenum(got_mention.text))))
+
+        print("Poker: No desianation found.")
+        return poker_player.change_and_judge([])
 
 
 # テスト
