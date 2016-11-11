@@ -256,7 +256,7 @@ class PokerThread(threading.Thread):
                     "ボクの手札は\n" + result[2] + "\n" + "だから…引き分け、だね♦"
             else:
                 reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。"
-            status_code = self.replyobj.twitterlib.reply(self.mention, reply_text)
+            status_code = self.twitterlib.reply(self.mention, reply_text)
             reply._handle_status(status_code, "Poker")
 
 
