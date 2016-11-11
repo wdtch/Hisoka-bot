@@ -275,7 +275,7 @@ def _play_poker(mention, twitterlib):
            沿った形式かどうかをチェックし、合っていればその数字に応じて手札を交換
            沿っていなければ無視する
            交換後の手札を用いてポーカーを行い、勝敗を記したテキストを含むパラメータを返す"""
-        poker_player = poker.Poker()
+        poker_player = Poker()
 
         # 最初の手札を送信
         first = poker_player.first_hand_str()
