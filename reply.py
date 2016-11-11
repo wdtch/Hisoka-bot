@@ -71,7 +71,7 @@ class AutoReply(object):
             pass
 
 
-def _handle_status(self, code, kind):
+def _handle_status(code, kind):
     """ステータスコードを受け取って、コードに応じたログを出力する"""
     if code == 200:
         print("Succeeded: {}.".format(kind))
