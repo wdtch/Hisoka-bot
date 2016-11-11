@@ -52,20 +52,23 @@ class MyTwitterLib(object):
             return None
 
     # mention取得
-    def get_mentions(self, num, record=True):
+    def get_mentions(self, num, record=True, since_id=""):
         url = "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
 
-        # 最後に取得したmentionのIDを取得
-        _ftp = ftputil.FTPHost(os.getenv("FTPHOST"),
-                               os.getenv("FTPUSERNAME"),
-                               os.getenv("FTPPASSWORD"))
-        if _ftp.path.exists("./since_id_m.txt"):
-            with _ftp.open("./since_id_m.txt") as f:
-                since_id = f.readline()
+        # ID指定があった場合そのIDから取得
+        if since_id != "":
             params = {"count": num, "since_id": since_id}
         else:
-            since_id = ""
-            params = {"count": num}
+            # 最後に取得したmentionのIDを取得
+            _ftp = ftputil.FTPHost(os.getenv("FTPHOST"),
+                                   os.getenv("FTPUSERNAME"),
+                                   os.getenv("FTPPASSWORD"))
+            if _ftp.path.exists("./since_id_m.txt"):
+                with _ftp.open("./since_id_m.txt") as f:
+                    since_id = f.readline()
+                params = {"count": num, "since_id": since_id}
+            else:
+                params = {"count": num}
 
         # OAuthでGETメソッドを用いてタイムラインを取得
         req = self.session.get(url, params=params)
