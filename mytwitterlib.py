@@ -75,7 +75,7 @@ class MyTwitterLib(object):
 
         # 取得成功
         if req.status_code == 200:
-            print("Succeeded to get mentions.")
+            print("Succeeded to get {} mentions.".format(num))
             # json形式で取得したタイムラインをパース
             mentions = list(map(Tweet, json.loads(req.text)))
 
