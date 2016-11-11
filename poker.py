@@ -267,7 +267,7 @@ def is_valid_changenum(char):
 def get_changenum(mention):
     return list(set(filter(is_valid_changenum, list(mention))))
 
-def _play_poker(self, mention, twitterlib):
+def _play_poker(mention, twitterlib):
         """ポーカーの開始を要求するメンションを受け取り、ポーカーを行う
            リプライの宛先やパラメータを構成するのに引数のmentionを用いる
            最初の手札をリプライで送信し、n分後にメンションを読み込む
