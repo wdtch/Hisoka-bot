@@ -22,6 +22,6 @@ def check_threadnum():
 
 if __name__ == '__main__':
     b_scheduler.add_job(run_reply, "interval", id="run_reply", seconds=60)
-    b_scheduler.add_job(check_threadnum, "interval", id="check_threadnum", seconds=60)
+    b_scheduler.add_job(check_threadnum, "interval", id="check_threadnum", seconds=90)
     b_scheduler.add_job(run_regular_tweet, "interval", id="run_regular_tweet", minutes=30)
     b_scheduler.start()
