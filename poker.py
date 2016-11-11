@@ -240,7 +240,7 @@ class PokerThread(threading.Thread):
 
     def run(self):
         # 勝ったプレイヤーを表す文字列が返ってくる
-        result = _play_poker(self.mention)
+        result = _play_poker(self.mention, self.twitterlib)
 
         if result is not None:
             if result[0] == "player":
