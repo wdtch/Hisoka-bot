@@ -59,6 +59,7 @@ target/
 .DS_Store
 .gitignore_h
 auth.py
+followtest.py
 ftpauth.py
 keys.py
 pip-selfcheck.json
