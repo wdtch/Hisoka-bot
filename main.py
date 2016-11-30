@@ -13,7 +13,7 @@ b_scheduler = BlockingScheduler()
 reg_man = regular_tweet.RegularTweet()
 reply_man = reply.AutoReply()
 
-def run_followback()
+def run_followback():
     followback.followback()
 
 def run_reply():
