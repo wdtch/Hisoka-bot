@@ -300,7 +300,7 @@ def _play_poker(mention, twitterlib):
                 # ポーカーを要求した人と同一人物からのメンションを探す
                 if got_mention.user_id == first_user_id and re.search(r"[0-6]", got_mention.text):
                     print("Poker: Found designation of cards to change.")
-                    return tuple(poker_player.change_and_judge(list(map(int, get_changenum(got_mention.text)))), got_mention)
+                    return (poker_player.change_and_judge(list(map(int, get_changenum(got_mention.text)))), got_mention)
 
         print("Poker: No desianation found.")
         return poker_player.change_and_judge([]), None
