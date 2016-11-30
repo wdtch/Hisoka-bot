@@ -242,7 +242,9 @@ class PokerThread(threading.Thread):
 
     def run(self):
         # 勝ったプレイヤーを表す文字列が返ってくる
-        result = _play_poker(self.mention, self.twitterlib)
+        res = _play_poker(self.mention, self.twitterlib)
+        result = res[0]
+        change_designaion = res[1]
 
         if result is not None:
             if result[0] == "player":
@@ -256,7 +258,7 @@ class PokerThread(threading.Thread):
                     "ボクの手札は\n" + result[2] + "\n" + "だから…引き分け、だね♦"
             else:
                 reply_text = "【中の人より】ポーカーでエラーが発生しました。ごめんなさい。"
-            status_code = self.twitterlib.reply(self.mention, reply_text)
+            status_code = self.twitterlib.reply(change_designaion, reply_text)
             reply._handle_status(status_code, "Poker")
 
 
@@ -298,10 +300,10 @@ def _play_poker(mention, twitterlib):
                 # ポーカーを要求した人と同一人物からのメンションを探す
                 if got_mention.user_id == first_user_id and re.search(r"[0-6]", got_mention.text):
                     print("Poker: Found designation of cards to change.")
-                    return poker_player.change_and_judge(list(map(int, get_changenum(got_mention.text))))
+                    return tuple(poker_player.change_and_judge(list(map(int, get_changenum(got_mention.text)))), got_mention)
 
         print("Poker: No desianation found.")
-        return poker_player.change_and_judge([])
+        return poker_player.change_and_judge([]), None
 
 
 # テスト
